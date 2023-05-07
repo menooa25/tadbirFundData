@@ -1,15 +1,15 @@
 import abc
-from bs4 import BeautifulSoup
+
 import pandas as pd
-import uuid
 import requests
 import xlwings as xw
+from bs4 import BeautifulSoup
 
 
 class TadbirAbc(abc.ABC):
 
     @classmethod
-    def __init__(cls, whole_data: bool, base_url: str):
+    def __init__(cls, whole_data: bool, se: str, base_url: str):
         pass
 
     @classmethod
@@ -31,7 +31,8 @@ class TadbirAbc(abc.ABC):
 
 class Tadbir(TadbirAbc):
 
-    def __init__(self, base_url: str, whole_data=False):
+    def __init__(self, base_url: str, se: str, whole_data=False, ):
+        self.se = se
         self.base_url = base_url
         self.whole_data = whole_data
 
@@ -42,7 +43,7 @@ class Tadbir(TadbirAbc):
             excel_link = soup.find(id='btnExportToExcel').get('href')
             excel_link = f'https://fund.sabaamc.ir{excel_link}'
             response = requests.get(excel_link)
-            excel_file_name = f'FundNAVList_{uuid.uuid4()}.xlsx'
+            excel_file_name = f'FundNAVList_{self.se}.xlsx'
             with open(excel_file_name, 'wb') as f:
                 f.write(response.content)
             wb = xw.Book(excel_file_name)  # this will open a new workbook
